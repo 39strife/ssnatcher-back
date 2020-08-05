@@ -1,0 +1,88 @@
+[
+    {
+        "table": "games",
+        "rows": [
+            {
+                "id": 1,
+                "name": "Tekken",
+                "created_at": "2020-08-05 20:39:26",
+                "updated_at": "2020-08-05 20:39:27"
+            },
+            {
+                "id": 2,
+                "name": "Street Fighter",
+                "created_at": "2020-08-05 20:40:20",
+                "updated_at": "2020-08-05 20:40:23"
+            }
+        ]
+    },
+    {
+        "table": "properties",
+        "rows": [
+            {
+                "id": 1,
+                "game_id": 1,
+                "name": "Damage",
+                "created_at": "2020-08-05 20:40:48",
+                "updated_at": "2020-08-05 20:40:49"
+            },
+            {
+                "id": 2,
+                "game_id": 1,
+                "name": "Hit Count",
+                "created_at": "2020-08-05 20:41:02",
+                "updated_at": "2020-08-05 20:41:04"
+            }
+        ]
+    },
+    {
+        "table": "users",
+        "rows": [
+            {
+                "id": 1,
+                "name": null,
+                "email": "alek@gmail.com",
+                "email_verified_at": "2020-08-05 18:51:19",
+                "email_verification": null,
+                "password": "$2y$10$HmXVAeYUHCe9iW9kZZY6s.ak92H..g2MJlPH77nAmswuLnA/F8Cqa",
+                "remember_token": null,
+                "created_at": "2020-08-05 18:51:08",
+                "updated_at": "2020-08-05 18:51:19"
+            }
+        ]
+    },
+    {
+        "table": "combo_properties",
+        "rows": [
+            {
+                "id": 1,
+                "combo_id": 1,
+                "property_id": 1,
+                "value": "83",
+                "created_at": "2020-08-05 21:03:19",
+                "updated_at": "2020-08-05 21:03:18"
+            },
+            {
+                "id": 2,
+                "combo_id": 1,
+                "property_id": 2,
+                "value": "11",
+                "created_at": "2020-08-05 21:03:17",
+                "updated_at": "2020-08-05 21:03:18"
+            }
+        ]
+    },
+    {
+        "table": "combos",
+        "rows": [
+            {
+                "id": 1,
+                "combo": "uf dw 2",
+                "name": "Jakoto",
+                "user_id": 1,
+                "created_at": "2020-08-05 21:03:22",
+                "updated_at": "2020-08-05 21:03:23"
+            }
+        ]
+    }
+]
