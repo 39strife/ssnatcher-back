@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Combo;
+use App\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,7 +61,7 @@ class ComboController extends Controller
      */
     public function show(Combo $combo)
     {
-        return response()->json($combo, 200);
+        return response()->json($combo->with(['comments.replies'])->get(), 200);
     }
 
     /**
@@ -92,6 +93,19 @@ class ComboController extends Controller
      */
     public function destroy(Combo $combo)
     {
-        //
+        if ($combo->user->id == auth('api')->user()->id) {
+            $combo->delete();
+            return response()->json(['message' => "Well, okay. That's gone now."], 200);
+        }
+        return response()->json(['message' => "You're trying to do something you're not supposed to."], 400);
+    }
+
+    public function comment(Combo $combo, Request $request)
+    {
+        $user = auth("api")->user();
+        $comment = new Comment($request->only(['comment', 'rating']));
+        $comment->user()->associate($user);
+        $combo->comments()->save($comment);
+        return response()->json([$combo->comments()->count()], 200);
     }
 }

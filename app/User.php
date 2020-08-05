@@ -40,7 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 
     public function combos()
     {
-        return $this->hasMany('App\Combo', "user_id", "id");
+        return $this->hasMany(Combo::class, "user_id", "id");
     }
 
     public function getJWTIdentifier()

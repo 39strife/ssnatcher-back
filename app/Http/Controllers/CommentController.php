@@ -7,26 +7,10 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
     {
-        //
+        $this->middleware('auth:api')->except(['index', 'show']);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -36,17 +20,16 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //
+        $comment = new Comment($request->only(['parent_id', 'comment', 'rating']));
+        $comment->user()->associate(auth("api")->user());
+        if (!$comment->save()) {
+            return response()->json(['message' => "Whoops, something went wrong!"], 400);
+        }
+        return response()->json(['message' => "Hooray, the comment is posted!"], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Comment $comment)
+    public function show()
     {
-        //
     }
 
     /**
@@ -55,21 +38,22 @@ class CommentController extends Controller
      * @param  \App\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function edit(Comment $comment)
+    private function checkAuthor($comment)
     {
-        //
+        if ($comment->user_id !== auth("api")->user()->id) {
+            return response()->json(['message' => "You can't really edit this, so why are you trying?"], 400);
+        };
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Comment $comment)
+    public function update(Comment $comment, Request $request)
     {
-        //
+        $this->checkAuthor($comment);
+
+        $comment->update($request->only(['comment', 'rating']));
+        if ($comment->save()) {
+            return response()->json(['message' => "Yay, you edited the comment!"], 200);
+        }
+
+        return response()->json(['message' => "Something went horribly wrong"], 400);
     }
 
     /**
@@ -81,5 +65,11 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         //
+        $this->checkAuthor($comment);
+        $comment->comment = "This comment was deleted";
+        $comment->user_id = 0;
+        if ($comment->save()) {
+            return response()->json(['message' => "Yay, you deleted the comment!"], 200);
+        }
     }
 }

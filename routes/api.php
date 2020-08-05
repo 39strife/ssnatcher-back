@@ -23,6 +23,11 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::apiResource("combos", "ComboController");
+Route::apiResource("comment", "CommentController");
+
+Route::group(['prefix' => 'combos'], function () {
+    Route::post('{combo}/comment', "ComboController@comment");
+});
 
 Route::group(['prefix' => 'list'], function () {
     Route::get('games', 'ListController@games');

@@ -104,7 +104,9 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => "Something's not correct here!", "errors" => $validator->errors()], 400);
         }
-
+        if (!User::where("email", '=', $credentials['email'])->first()->hasVerifiedEmail()) {
+            return response()->json(['message' => "You gotta verify your email!"], 400);
+        }
         if (!($token = auth("api")->attempt($credentials))) {
             return response()->json(['message' => "Something's not correct here!"], 401);
         }

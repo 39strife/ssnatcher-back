@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Actuallymab\LaravelComment\Contracts;
 use Illuminate\Database\Eloquent\Model;
 
 class Combo extends Model
@@ -11,6 +12,7 @@ class Combo extends Model
      *
      * @var array
      */
+
     protected $fillable = [
         'name', 'combo',
     ];
@@ -20,10 +22,14 @@ class Combo extends Model
     ];
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
     public function properties()
     {
-        return $this->hasMany('App\ComboProperties');
+        return $this->hasMany(ComboProperties::class);
+    }
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable',)->whereNull('parent_id');
     }
 }

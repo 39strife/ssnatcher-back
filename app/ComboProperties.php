@@ -20,6 +20,6 @@ class ComboProperties extends Model
 
     public function name()
     {
-        return $this->belongsTo('App\Property', 'property_id', "id");
+        return $this->belongsTo(Property::class, 'property_id', "id");
     }
 }
