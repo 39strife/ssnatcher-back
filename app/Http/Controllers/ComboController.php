@@ -21,7 +21,10 @@ class ComboController extends Controller
     public function index($page = 0)
     {
         //
-        $combos = Combo::all();
+        $combos = Combo::with(["ratings"])->paginate(15, ['*'], "page", $page);
+        foreach ($combos as $i => $value) {
+            $combos[$i] = $value->avarageRating()->hasUserRated();
+        }
         return response()->json($combos);
     }
 
@@ -62,7 +65,7 @@ class ComboController extends Controller
      */
     public function show(Combo $combo)
     {
-        return response()->json($combo->with(['comments.replies'])->get(), 200);
+        return response()->json($combo->load(['comments.replies', 'ratings'])->hasUserRated()->avarageRating(), 200);
     }
 
     private function checkAuthor($combo)
@@ -106,6 +109,12 @@ class ComboController extends Controller
 
         return response()->json(['message' => "Well, okay. That's gone now."], 200);
     }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Combo  $combo
+     * @return \Illuminate\Http\Response
+     */
 
     public function comment(Combo $combo, Request $request)
     {
@@ -114,5 +123,16 @@ class ComboController extends Controller
         $comment->user()->associate($user);
         $combo->comments()->save($comment);
         return response()->json([$combo->comments()->count()], 200);
+    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Combo  $combo
+     * @return \Illuminate\Http\Response
+     */
+    public function rate(Combo $combo, Request $request)
+    {
+        $rating = $combo->rate($request->input("rating"));
+        return response()->json($rating[0], $rating[1]);
     }
 }

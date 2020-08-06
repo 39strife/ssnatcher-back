@@ -52,6 +52,12 @@ class Handler extends ExceptionHandler
     {
         // return response()->json(["message" => "There's something a miss here"], 500);
 
-        return parent::render($request, $exception);
+        if (env("APP_DEBUG", true)) {
+            return parent::render($request, $exception);
+        }
+        if (!auth()->id()) {
+            return response()->json(['message' => "You may need to log in to do that"], 400);
+        }
+        return response()->json(['message' => "There was an error processing the request"], 400);
     }
 }

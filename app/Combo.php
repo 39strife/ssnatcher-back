@@ -3,10 +3,13 @@
 namespace App;
 
 use Actuallymab\LaravelComment\Contracts;
+use App\Traits\Rateable;
 use Illuminate\Database\Eloquent\Model;
 
 class Combo extends Model
 {
+    use Rateable;
+
     /**
      * The attributes that are mass assignable.
      *

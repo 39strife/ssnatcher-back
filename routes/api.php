@@ -27,6 +27,7 @@ Route::apiResource("comment", "CommentController");
 
 Route::group(['prefix' => 'combos'], function () {
     Route::post('{combo}/comment', "ComboController@comment");
+    Route::post('{combo}/rate', "ComboController@rate");
 });
 
 Route::group(['prefix' => 'list'], function () {
