@@ -32,4 +32,5 @@ Route::group(['prefix' => 'combos'], function () {
 Route::group(['prefix' => 'list'], function () {
     Route::get('games', 'ListController@games');
     Route::get('properties/{game?}', 'ListController@properties');
+    Route::get('characters/{game?}', 'ListController@characters');
 });

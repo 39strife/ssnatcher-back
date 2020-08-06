@@ -46,6 +46,7 @@ class ComboController extends Controller
         $user = auth("api")->user();
         $combo = new Combo($request->only(['combo', "name"]));
         $combo->user_id = $user->id;
+
         if ($combo->save()) {
             return response()->json(["message" => "Great, the combo has been added!"], 200);
         } else {
@@ -64,6 +65,13 @@ class ComboController extends Controller
         return response()->json($combo->with(['comments.replies'])->get(), 200);
     }
 
+    private function checkAuthor($combo)
+    {
+        if ($combo->user->id !== auth("api")->user()->id && !auth("api")->user()->admin) {
+            return response()->json(['message' => "You can't really edit this, so why are you trying?"], 400);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -74,11 +82,9 @@ class ComboController extends Controller
     public function update(Request $request, Combo $combo)
     {
         //
-        if ($combo->user->id !== auth("api")->user()->id) {
-            return response()->json(['message' => "You can't really edit this, so why are you trying?"], 400);
-        }
+        $this->checkAuthor($combo);
         $inputs = $request->all();
-        $combo->update();
+        $combo->update($inputs);
         if (!$combo->save()) {
             return response()->json(['message' => "Something went wrong"], 400);
         }
@@ -93,11 +99,12 @@ class ComboController extends Controller
      */
     public function destroy(Combo $combo)
     {
-        if ($combo->user->id == auth('api')->user()->id) {
-            $combo->delete();
-            return response()->json(['message' => "Well, okay. That's gone now."], 200);
+        $this->checkAuthor($combo);
+        if (!$combo->delete()) {
+            return response()->json(['message' => "Something went wrong."], 400);
         }
-        return response()->json(['message' => "You're trying to do something you're not supposed to."], 400);
+
+        return response()->json(['message' => "Well, okay. That's gone now."], 200);
     }
 
     public function comment(Combo $combo, Request $request)

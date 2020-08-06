@@ -14,15 +14,19 @@ class Combo extends Model
      */
 
     protected $fillable = [
-        'name', 'combo',
+        'name', 'combo', 'description',
     ];
     protected $with = ['user', 'properties'];
     protected $hidden = [
-        'user_id'
+        'user_id', 'character_id'
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function character()
+    {
+        return $this->belongsTo(Character::class);
     }
     public function properties()
     {

@@ -40,7 +40,7 @@ class CommentController extends Controller
      */
     private function checkAuthor($comment)
     {
-        if ($comment->user_id !== auth("api")->user()->id) {
+        if ($comment->user_id !== auth("api")->user()->id && !auth("api")->user()->admin) {
             return response()->json(['message' => "You can't really edit this, so why are you trying?"], 400);
         };
     }
