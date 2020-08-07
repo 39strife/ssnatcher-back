@@ -17,6 +17,7 @@ class CreateCombosTable extends Migration
             $table->id();
             $table->longText("combo")->default(NULL);
             $table->string("name");
+            $table->string('slug');
             $table->longText("description")->default(NULL)->nullable();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');

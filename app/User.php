@@ -11,6 +11,16 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 {
     use Notifiable;
 
+    public static function boot()
+    {
+        parent::boot();
+
+
+        self::created(function ($model) {
+            $profile = new Profile();
+            $model->profile()->save($profile);
+        });
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -29,6 +39,11 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'password', 'remember_token', 'email_verification'
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'username';
+    }
+
     protected $with = ['profile'];
     /**
      * The attributes that should be cast to native types.
@@ -39,6 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    public function getRole()
+    {
+    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class);
@@ -47,6 +66,10 @@ class User extends Authenticatable implements MustVerifyEmail, JWTSubject
     public function combos()
     {
         return $this->hasMany(Combo::class, "user_id", "id");
+    }
+    public function posts()
+    {
+        return $this->hasMany(Post::class, "user_id", "id");
     }
 
     public function getJWTIdentifier()

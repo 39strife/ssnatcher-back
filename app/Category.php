@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-class Character extends Model
+class Category extends Model
 {
     use HasSlug;
 
@@ -20,15 +20,10 @@ class Character extends Model
             ->saveSlugsTo('slug');
     }
     //
-    protected $fillable = ['name', 'image', 'description'];
-    protected $hidden = ['game_id'];
-    protected $with = ['game'];
-    public function game()
+    protected $fillable = ['name', 'description', 'image'];
+
+    public function posts()
     {
-        return $this->belongsTo(Game::class);
-    }
-    public function getRouteKeyName()
-    {
-        return 'slug';
+        return $this->hasMany(Post::class);
     }
 }

@@ -35,3 +35,8 @@ Route::group(['prefix' => 'list'], function () {
     Route::get('properties/{game?}', 'ListController@properties');
     Route::get('characters/{game?}', 'ListController@characters');
 });
+
+Route::group(['prefix' => 'profile'], function () {
+    Route::get('me', 'UserController@me');
+    Route::get('{user}', 'UserController@profile');
+});

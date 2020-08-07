@@ -37,8 +37,6 @@ class UserController extends Controller
             $user->password = Hash::make($inputs['password']);
             $user->email_verification = Str::random(60);
             $user->save();
-            $profile = new Profile();
-            $user->profile()->save($profile);
             $response = ['message' => "Great! Check your email", 'success' => true];
         }
 
@@ -130,5 +128,19 @@ class UserController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    public function me()
+    {
+        $user = User::find(auth("api")->id());
+        return response()->json($user->load('profile'), 200);
+    }
+
+    public function profile(User $user)
+    {
+        if (!$user) {
+            return response()->json(['message' => "We can't find that profile"], 400);
+        }
+        return response()->json($user->load(['profile', 'combos', 'posts']), 200);
     }
 }

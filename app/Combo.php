@@ -6,10 +6,12 @@ use Actuallymab\LaravelComment\Contracts;
 use App\Traits\Commentable;
 use App\Traits\Rateable;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Combo extends Model
 {
-    use Rateable, Commentable;
+    use Rateable, Commentable, HasSlug;
 
     /**
      * The attributes that are mass assignable.
@@ -35,5 +37,11 @@ class Combo extends Model
     public function properties()
     {
         return $this->hasMany(ComboProperties::class);
+    }
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 }

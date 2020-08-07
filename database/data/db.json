@@ -1,6 +1,7 @@
 [
     {
         "table": "games",
+        "model": "App\\Game",
         "rows": [
             {
                 "id": 1,
@@ -18,6 +19,7 @@
     },
     {
         "table": "properties",
+        "model": "App\\Property",
         "rows": [
             {
                 "id": 1,
@@ -37,6 +39,7 @@
     },
     {
         "table": "users",
+        "model": "App\\User",
         "rows": [
             {
                 "id": 1,
@@ -54,6 +57,7 @@
     },
     {
         "table": "characters",
+        "model": "App\\Character",
         "rows": [
             {
                 "name": "Akuma",
@@ -294,6 +298,7 @@
     },
     {
         "table": "combos",
+        "model": "App\\Combo",
         "rows": [
             {
                 "id": 1,
@@ -308,6 +313,7 @@
     },
     {
         "table": "combo_properties",
+        "model": "App\\ComboProperties",
         "rows": [
             {
                 "id": 1,
