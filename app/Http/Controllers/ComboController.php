@@ -65,12 +65,12 @@ class ComboController extends Controller
      */
     public function show(Combo $combo)
     {
-        return response()->json($combo->load(['comments.replies', 'ratings'])->hasUserRated()->avarageRating(), 200);
+        return response()->json($combo->load(['comments.replies.replies.replies.replies.replies', 'ratings'])->hasUserRated()->avarageRating(), 200);
     }
 
     private function checkAuthor($combo)
     {
-        if ($combo->user->id !== auth("api")->user()->id && !auth("api")->user()->admin) {
+        if ($combo->user->id !== auth("api")->user()->id && !auth("api")->user()->role > 3) {
             return response()->json(['message' => "You can't really edit this, so why are you trying?"], 400);
         }
     }
@@ -118,11 +118,9 @@ class ComboController extends Controller
 
     public function comment(Combo $combo, Request $request)
     {
-        $user = auth("api")->user();
-        $comment = new Comment($request->only(['comment', 'rating']));
-        $comment->user()->associate($user);
-        $combo->comments()->save($comment);
-        return response()->json([$combo->comments()->count()], 200);
+        error_log(json_encode($request->all()));
+        $return = $combo->comment($request->input('comment'));
+        return response()->json($return[0], $return[1]);
     }
     /**
      * Remove the specified resource from storage.

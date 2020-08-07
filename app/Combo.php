@@ -3,12 +3,13 @@
 namespace App;
 
 use Actuallymab\LaravelComment\Contracts;
+use App\Traits\Commentable;
 use App\Traits\Rateable;
 use Illuminate\Database\Eloquent\Model;
 
 class Combo extends Model
 {
-    use Rateable;
+    use Rateable, Commentable;
 
     /**
      * The attributes that are mass assignable.
@@ -34,9 +35,5 @@ class Combo extends Model
     public function properties()
     {
         return $this->hasMany(ComboProperties::class);
-    }
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'commentable',)->whereNull('parent_id');
     }
 }

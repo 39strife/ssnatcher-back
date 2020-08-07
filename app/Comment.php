@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Commentable;
+use App\Traits\Rateable;
 use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    use Commentable, Rateable;
     //
     protected $fillable = [
         'comment', 'rating'
@@ -19,6 +22,7 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 
     public function commentable()
     {

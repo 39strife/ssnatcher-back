@@ -40,11 +40,11 @@
         "rows": [
             {
                 "id": 1,
-                "name": null,
+                "username": "39strife",
                 "email": "alek@gmail.com",
                 "email_verified_at": "2020-08-05 18:51:19",
                 "email_verification": null,
-                "admin": true,
+                "role": 5,
                 "password": "$2y$10$HmXVAeYUHCe9iW9kZZY6s.ak92H..g2MJlPH77nAmswuLnA/F8Cqa",
                 "remember_token": null,
                 "created_at": "2020-08-05 18:51:08",

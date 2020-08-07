@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Profile;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,23 +22,27 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $rules = [
-            'email' => 'required|unique:users|max:255',
-            'password' => 'required|confirmed',
+            'email' => 'required|email|unique:users|max:255|min:8',
+            'username' => 'required|unique:users|max:255|min:8|alpha_dash',
+            'password' => 'required|confirmed|min:8',
         ];
         $response = ['message' => "Something went wrong", 'success' => false];
-        $inputs = $request->only(['email', 'password', 'password_confirmation']);
+        $inputs = $request->only(['email', 'password', 'password_confirmation', 'username']);
         $validator = Validator::make($inputs, $rules);
         if ($validator->fails()) {
             $response['errors'] = $validator->errors();
         } else {
             $user = new User($inputs);
+            $user->username = $inputs['username'];
             $user->password = Hash::make($inputs['password']);
             $user->email_verification = Str::random(60);
             $user->save();
+            $profile = new Profile();
+            $user->profile()->save($profile);
             $response = ['message' => "Great! Check your email", 'success' => true];
         }
 
-        return response()->json($response);
+        return response()->json($response, $response['success'] ? 200 : 400);
     }
     /**
      * Authenticate email.
@@ -95,16 +100,16 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $rules = [
-            'email' => 'required|email',
-            'password' => "required|min:8"
-        ];
-        $validator = Validator::make($request->all(), $rules);
-        $credentials = request(['email', 'password']);
+        $credentials = $request->only(['username', 'email', 'password']);
+        $validator = Validator::make($credentials, [
+            'username' => 'sometimes|required',
+            'email' => 'sometimes|required|email',
+            'password' => 'required'
+        ]);
         if ($validator->fails()) {
             return response()->json(['message' => "Something's not correct here!", "errors" => $validator->errors()], 400);
         }
-        if (!User::where("email", '=', $credentials['email'])->first()->hasVerifiedEmail()) {
+        if (!User::where(array_key_exists('username', $credentials) ? "username" : "email", '=', array_key_exists('username', $credentials) ? $credentials['username'] :  $credentials['email'])->first()->hasVerifiedEmail()) {
             return response()->json(['message' => "You gotta verify your email!"], 400);
         }
         if (!($token = auth("api")->attempt($credentials))) {

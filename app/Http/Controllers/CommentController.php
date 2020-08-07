@@ -20,8 +20,9 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //
-        $comment = new Comment($request->only(['parent_id', 'comment', 'rating']));
+        $comment = new Comment($request->only(['comment']));
         $comment->user()->associate(auth("api")->user());
+        $comment->parent_id = $request->input("parent_id");
         if (!$comment->save()) {
             return response()->json(['message' => "Whoops, something went wrong!"], 400);
         }
@@ -40,7 +41,7 @@ class CommentController extends Controller
      */
     private function checkAuthor($comment)
     {
-        if ($comment->user_id !== auth("api")->user()->id && !auth("api")->user()->admin) {
+        if ($comment->user_id !== auth("api")->user()->id && !auth("api")->user()->role > 3) {
             return response()->json(['message' => "You can't really edit this, so why are you trying?"], 400);
         };
     }
