@@ -107,8 +107,12 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => "Something's not correct here!", "errors" => $validator->errors()], 400);
         }
-        if (!User::where(array_key_exists('username', $credentials) ? "username" : "email", '=', array_key_exists('username', $credentials) ? $credentials['username'] :  $credentials['email'])->first()->hasVerifiedEmail()) {
+        $user = User::where(array_key_exists('username', $credentials) ? "username" : "email", '=', array_key_exists('username', $credentials) ? $credentials['username'] :  $credentials['email'])->first();
+        if ($user && !$user->hasVerifiedEmail()) {
             return response()->json(['message' => "You gotta verify your email!"], 400);
+        }
+        if (!$user) {
+            return response()->json(['message' => "There's no such user!"], 400);
         }
         if (!($token = auth("api")->attempt($credentials))) {
             return response()->json(['message' => "Something's not correct here!"], 401);
