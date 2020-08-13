@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserVerification;
 use App\Profile;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -37,6 +39,7 @@ class UserController extends Controller
             $user->password = Hash::make($inputs['password']);
             $user->email_verification = Str::random(60);
             $user->save();
+            Mail::to($user->email)->send(new UserVerification($user->email_verification));
             $response = ['message' => "Great! Check your email", 'success' => true];
         }
 

@@ -15,3 +15,9 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+
+Route::get("/email/{template?}", function ($template) {
+    $template = str_replace("/", ".", $template);
+    return view("emails." . $template);
+})->where('template', '.*');
