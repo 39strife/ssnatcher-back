@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\UserVerification;
 use App\Profile;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -117,7 +118,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['message' => "There's no such user!"], 400);
         }
-        if (!($token = auth("api")->attempt($credentials))) {
+        if (!($token = auth("api")->attempt($credentials, ['exp' => Carbon::now()->addDays(7)->timestamp]))) {
             return response()->json(['message' => "Something's not correct here!"], 401);
         }
         return $this->respondWithToken($token);
@@ -133,7 +134,7 @@ class UserController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * env('JWT_TTL', 10080)
         ]);
     }
 
