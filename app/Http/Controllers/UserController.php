@@ -160,9 +160,10 @@ class UserController extends Controller
         $validationRules = [
             'avatar' => "image|max:5120",
             'banner' => "image|max:5120",
+            'description' => 'max:256',
             'socials' => "json",
         ];
-        $inputs = $request->only(['avatar', 'socials', 'banner']);
+        $inputs = $request->only(['avatar', 'socials', 'banner', "description"]);
         $validator = Validator::make($inputs, $validationRules);
         if ($validator->fails()) {
             return response()->json(['message' => "There was some kind of problem here.", 'errors' => $validator->errors()], 400);
@@ -187,8 +188,12 @@ class UserController extends Controller
         if ($request->has("socials")) {
             $profile->socials = $inputs['socials'];
         }
-        $profile->save();
-        $inputs = $request->only(['avatar', 'banner', 'socials', 'description']);
-        return response()->json(['debug' => [$request->all('socials'), $request->file('avatar'), $avatar, $inputs]], 200);
+        if ($request->has("description")) {
+            $profile->description = $inputs['description'];
+        }
+        if ($profile->save()) {
+            return response()->json(['message' => "Your profile has been successfully updated"], 200);
+        }
+        return response()->json(['message' => "No idea what happened, but something aint right"], 400);
     }
 }
