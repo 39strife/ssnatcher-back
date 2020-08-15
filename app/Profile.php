@@ -18,6 +18,11 @@ class Profile extends Model
         "user_id",
     ];
 
+    public function getSocialsAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
     public function user()
     {
         $this->belongsTo(User::class);

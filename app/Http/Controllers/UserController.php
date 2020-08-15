@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -153,8 +154,41 @@ class UserController extends Controller
     }
     public function profileUpdate(Request $request)
     {
+        $user = auth("api")->user();
+        $user->load("profile");
+        $profile = Profile::find($user->profile->id);
+        $validationRules = [
+            'avatar' => "image|max:5120",
+            'banner' => "image|max:5120",
+            'socials' => "json",
+        ];
+        $inputs = $request->only(['avatar', 'socials', 'banner']);
+        $validator = Validator::make($inputs, $validationRules);
+        if ($validator->fails()) {
+            return response()->json(['message' => "There was some kind of problem here.", 'errors' => $validator->errors()], 400);
+        }
+        if ($request->hasFile('avatar')) {
+            if ($profile->avatar) {
+                Storage::delete($profile->avatar);
+            }
+            $randomString = Str::random(4);
+            $avatar =  Storage::putFileAs("/public/uploads/avatars", $request->file("avatar"), "{$user->username}-avatar-{$randomString}.{$request->file("avatar")->getClientOriginalExtension()}");
+            $profile->avatar = str_replace("public", "storage", $avatar);
+        }
+        if ($request->hasFile('banner')) {
+            error_log("has banner");
+            if ($profile->banner) {
+                Storage::delete($profile->banner);
+            }
+            $randomString = Str::random(4);
+            $banner =  Storage::putFileAs("/public/uploads/banners", $request->file("banner"), "{$user->username}-banner-{$randomString}.{$request->file("banner")->getClientOriginalExtension()}");
+            $profile->banner = str_replace("public", "storage", $banner);
+        }
+        if ($request->has("socials")) {
+            $profile->socials = $inputs['socials'];
+        }
+        $profile->save();
         $inputs = $request->only(['avatar', 'banner', 'socials', 'description']);
-
-        return response()->json(['debug' => $request->all()], 200);
+        return response()->json(['debug' => [$request->all('socials'), $request->file('avatar'), $avatar, $inputs]], 200);
     }
 }
