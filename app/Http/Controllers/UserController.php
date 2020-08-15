@@ -151,4 +151,10 @@ class UserController extends Controller
         }
         return response()->json($user->load(['profile', 'combos', 'posts']), 200);
     }
+    public function profileUpdate(Request $request)
+    {
+        $inputs = $request->only(['avatar', 'banner', 'socials', 'description']);
+
+        return response()->json(['debug' => $request->all()], 200);
+    }
 }

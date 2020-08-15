@@ -39,4 +39,5 @@ Route::group(['prefix' => 'list'], function () {
 Route::group(['prefix' => 'profile'], function () {
     Route::get('me', 'UserController@me');
     Route::get('{user}', 'UserController@profile');
+    Route::post('update', 'UserController@profileUpdate');
 });
