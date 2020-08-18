@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Character;
+use App\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class CharacterController extends Controller
+class GameController extends Controller
 {
     public function __construct()
     {
@@ -22,7 +22,7 @@ class CharacterController extends Controller
     public function index($game = null)
     {
         //
-        $characters = Character::all();
+        $characters = Game::all();
 
         return response()->json($characters, 200);
     }
@@ -54,10 +54,10 @@ class CharacterController extends Controller
      * @param  \App\Character  $character
      * @return \Illuminate\Http\Response
      */
-    public function show(Character $character)
+    public function show(Game $game)
     {
         //
-        return response()->json($character, 200);
+        return response()->json($game, 200);
     }
 
     /**
@@ -67,7 +67,7 @@ class CharacterController extends Controller
      * @param  \App\Character  $character
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Character $character)
+    public function update(Request $request, Game $game)
     {
         $validationRules = [
             'image' => "required|image|max:5120",
@@ -80,16 +80,16 @@ class CharacterController extends Controller
             return response()->json(['message' => "There was some kind of problem here.", 'errors' => $validator->errors()], 400);
         }
         if ($request->hasFile('image')) {
-            if (!empty($character->image)) {
-                Storage::delete($character->image);
+            if (!empty($game->image)) {
+                Storage::delete($game->image);
             }
             $randomString = Str::random(4);
-            $image =  Storage::putFileAs("/public/uploads/images", $request->file("image"), "{$character->slug}-image-{$randomString}.{$request->file("image")->getClientOriginalExtension()}");
-            $character->image = str_replace("public", "storage", $image);
+            $image =  Storage::putFileAs("/public/uploads/images", $request->file("image"), "{$game->slug}-image-{$randomString}.{$request->file("image")->getClientOriginalExtension()}");
+            $game->image = str_replace("public", "storage", $image);
         }
-        $character->name = $inputs['name'];
-        $character->description = $inputs['description'];
-        if ($character->save()) {
+        $game->name = $inputs['name'];
+        $game->description = $inputs['description'];
+        if ($game->save()) {
             return response()->json(['message' => "Succesfully saved!"], 200);
         }
 

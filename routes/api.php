@@ -41,3 +41,16 @@ Route::group(['prefix' => 'profile'], function () {
     Route::get('{user}', 'UserController@profile');
     Route::post('update', 'UserController@profileUpdate');
 });
+
+
+
+Route::group(['prefix' => 'character'], function () {
+    Route::get("/", "CharacterController@index");
+    Route::post("/{character}", "CharacterController@update");
+    Route::get("/{character}", "CharacterController@show");
+});
+Route::group(['prefix' => 'games'], function () {
+    Route::get("/", "GameController@index");
+    Route::post("/{game}", "GameController@update");
+    Route::get("/{game}", "GameController@show");
+});
