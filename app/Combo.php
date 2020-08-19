@@ -20,7 +20,7 @@ class Combo extends Model
      */
 
     protected $fillable = [
-        'name', 'combo', 'description',
+        'name', 'combo', 'image', 'description',
     ];
     protected $with = ['user', 'properties'];
     protected $hidden = [

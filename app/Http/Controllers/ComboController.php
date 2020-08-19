@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Character;
 use App\Combo;
+use App\ComboProperties;
 use App\Comment;
+use App\Property;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ComboController extends Controller
 {
@@ -43,15 +48,64 @@ class ComboController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    protected function makeImage($image)
+    {
+        $path = "";
+        if ($image) {
+            $randomString = Str::random(6);
+            $avatar =  Storage::putFileAs("/public/uploads/characterUploads", $image, "{$randomString}.{$image->getClientOriginalExtension()}");
+            $path = str_replace("public", "storage", $avatar);
+        }
+        return $path;
+    }
     public function store(Request $request)
     {
-        //
+        //        
         $user = auth("api")->user();
-        $combo = new Combo($request->only(['combo', "name"]));
-        $combo->user_id = $user->id;
+        $inputs = $request->only([
+            "combo",
+            "name",
+            "image",
+            "game",
+            "character",
+            "content",
+        ]);
+        $validator = Validator::make($inputs, [
+            'combo' => 'required',
+            'name' => 'required|max:256',
+            'image' => 'image|max:1024',
+            'game' => 'required',
+            'character' => 'required',
+            'content' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(["message" => "Something went wrong!", "errors" => $validator->errors()], 400);
+        }
+        $character = Character::where('slug', $inputs['character'])->first();
+        $image = $character->image;
+        if ($request->hasFile("image")) {
+            $image = $this->makeImage($request->file("image"));
+        }
+        $combo = new Combo;
+        $combo->image = $image;
+        $combo->name = $inputs['name'];
+        $combo->combo = $inputs['combo'];
+        $combo->description = $inputs['content'];
+        $combo->character()->associate($character);
+        $combo->user()->associate($user);
 
         if ($combo->save()) {
-            return response()->json(["message" => "Great, the combo has been added!"], 200);
+            foreach ($request->input("property") as $key => $value) {
+                if (!empty($value)) {
+                    $comboProperty = new ComboProperties;
+                    $comboProperty->combo_id = $combo->id;
+                    $comboProperty->property_id = $key;
+                    $comboProperty->value = $value;
+                    $comboProperty->save();
+                }
+            }
+            return response()->json(["message" => "Great, the combo has been added!", "combo" => $combo], 200);
         } else {
             return response()->json(["message" => "There was something wrong with your inputs!"], 400);
         }

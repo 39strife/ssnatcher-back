@@ -16,6 +16,7 @@ class CreateCombosTable extends Migration
         Schema::create('combos', function (Blueprint $table) {
             $table->id();
             $table->longText("combo")->default(NULL);
+            $table->string("image")->default(NULL)->nullable();
             $table->string("name");
             $table->string('slug');
             $table->longText("description")->default(NULL)->nullable();

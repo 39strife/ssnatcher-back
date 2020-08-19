@@ -22,4 +22,8 @@ class ComboProperties extends Model
     {
         return $this->belongsTo(Property::class, 'property_id', "id");
     }
+    public function combo()
+    {
+        return $this->belongsTo(Combo::class, 'property_id', "id");
+    }
 }
