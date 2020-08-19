@@ -18,6 +18,10 @@ class Game extends Model
     /**
      * Get the options for generating the slug.
      */
+    public function characters()
+    {
+        return $this->hasMany(Character::class);
+    }
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

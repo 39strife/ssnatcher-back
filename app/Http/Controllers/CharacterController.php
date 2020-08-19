@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Character;
+use App\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -19,10 +20,16 @@ class CharacterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($game = null)
+    public function index(Request $request)
     {
+        $characters = [];
+        if ($request->game) {
+            $characters = Game::first('slug', $request->game)->first()->load("characters")['characters'];
+        } else {
+            $characters = Character::all();
+        }
         //
-        $characters = Character::all();
+
 
         return response()->json($characters, 200);
     }
