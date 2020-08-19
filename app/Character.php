@@ -2,13 +2,14 @@
 
 namespace App;
 
+use App\Traits\Imageable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 class Character extends Model
 {
-    use HasSlug;
+    use HasSlug, Imageable;
 
     /**
      * Get the options for generating the slug.

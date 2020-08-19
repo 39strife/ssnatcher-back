@@ -42,8 +42,6 @@ Route::group(['prefix' => 'profile'], function () {
     Route::post('update', 'UserController@profileUpdate');
 });
 
-
-
 Route::group(['prefix' => 'character'], function () {
     Route::get("/", "CharacterController@index");
     Route::post("/{character}", "CharacterController@update");

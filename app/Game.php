@@ -2,13 +2,14 @@
 
 namespace App;
 
+use App\Traits\Imageable;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 class Game extends Model
 {
-    use HasSlug;
+    use HasSlug, Imageable;
 
     //
     protected $fillable = [
